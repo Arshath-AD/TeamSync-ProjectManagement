@@ -26,6 +26,10 @@ class TaskController extends Controller
      */
     public function index(Request $request)
     {
+        if (!$request->has('assignee')) {
+            $request->merge(['assignee' => [(string)Auth::id()]]);
+        }
+
         $data = $this->taskService->getIndexData($request);
         $data['projects'] = \App\Models\Project::orderBy('project_name')->get();
         $data['users']    = \App\Models\User::orderBy('name')->get();

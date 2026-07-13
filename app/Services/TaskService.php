@@ -152,8 +152,17 @@ class TaskService
             });
         }
 
-        if ($request->filled('assignee')) {
-            $query->where('assigned_to', $request->input('assignee'));
+        if ($request->has('assignee')) {
+            $assignees = (array) $request->input('assignee');
+            
+            // Security: Enforce that non-admins can only see their own tasks
+            if (\Illuminate\Support\Facades\Auth::user()->role !== 'admin') {
+                $assignees = [(string)\Illuminate\Support\Facades\Auth::id()];
+            }
+
+            if (!in_array('all', $assignees)) {
+                $query->whereIn('assigned_to', $assignees);
+            }
         }
 
         if ($request->filled('status')) {
