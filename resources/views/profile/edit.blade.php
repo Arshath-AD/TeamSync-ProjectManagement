@@ -13,7 +13,8 @@
                         <img id="avatar-preview-img"
                              src="{{ Auth::user()->avatarUrl() }}"
                              alt="{{ Auth::user()->name }}"
-                             class="w-20 h-20 rounded-full object-cover ring-2 ring-[var(--border)]"
+                             class="w-20 h-20 rounded-lg object-cover"
+                             style="ring:2px solid var(--border);"
                              onerror="this.src='{{ asset('images/default-avatar.jpg') }}'">
                         <div class="absolute inset-0 rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer"
                              onclick="document.getElementById('avatar-file-input').click()">
@@ -113,22 +114,13 @@
 
         const reader = new FileReader();
         reader.onload = function(e) {
-            // Remove initials div if present
-            const initials = document.getElementById('avatar-preview-initials');
-            if (initials) initials.remove();
-
-            // Update or create img
+            // Update existing img
             let img = document.getElementById('avatar-preview-img');
-            if (!img) {
-                img = document.createElement('img');
-                img.id = 'avatar-preview-img';
-                img.className = 'w-20 h-20 rounded-full object-cover ring-2 ring-[var(--border)]';
-                img.alt = 'Preview';
-                document.getElementById('avatar-preview-wrapper').prepend(img);
+            if (img) {
+                img.src = e.target.result;
             }
-            img.src = e.target.result;
 
-            // Show save button
+            // Reveal save button
             document.getElementById('avatar-save-btn').classList.remove('hidden');
         };
         reader.readAsDataURL(file);

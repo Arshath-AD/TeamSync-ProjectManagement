@@ -2,12 +2,14 @@
     <x-slot name="header">
         <div class="flex justify-between items-center w-full gap-3">
             <span>Workspace Directory</span>
-            <a href="{{ route('projects.create') }}" class="ts-btn-primary">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                </svg>
-                New Workspace
-            </a>
+            @if(Auth::user()->role === 'admin')
+                <a href="{{ route('projects.create') }}" class="ts-btn-primary">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    New Workspace
+                </a>
+            @endif
         </div>
     </x-slot>
 
@@ -40,7 +42,9 @@
                               d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
                     </svg>
                     <p class="mb-3">No workspaces yet.</p>
-                    <a href="{{ route('projects.create') }}" class="ts-btn-primary">Create your first workspace</a>
+                    @if(Auth::user()->role === 'admin')
+                        <a href="{{ route('projects.create') }}" class="ts-btn-primary">Create your first workspace</a>
+                    @endif
                 </div>
             @endforelse
         </div>

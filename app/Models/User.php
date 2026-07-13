@@ -68,7 +68,7 @@ class User extends Authenticatable
     public function avatarUrl(): string
     {
         if ($this->avatar) {
-            return \Illuminate\Support\Facades\Storage::url($this->avatar);
+            return asset('storage/' . $this->avatar);
         }
         return asset('images/default-avatar.jpg');
     }

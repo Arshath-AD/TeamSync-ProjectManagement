@@ -4,6 +4,17 @@ A modern team collaboration and project management web app built with **Laravel 
 
 ---
 
+## Preview
+![alt text](previews/preview1.png) 
+![alt text](previews/preview2.png)
+![alt text](previews/preview3.png) 
+![alt text](previews/preview4.png) 
+![alt text](previews/preview5.png) 
+![alt text](previews/preview6.png)
+
+
+---
+
 ## Features
 
 - **Dashboard** — Role-aware overview with task stats and workforce load distribution

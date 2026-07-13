@@ -1,26 +1,26 @@
 @props(['value', 'label', 'trend' => null, 'statusColor' => 'accent', 'icon' => null])
 
 @php
-    $accentStyles = match($statusColor) {
-        'success' => ['border' => 'rgba(34,197,94,0.4)',  'text' => 'var(--success)', 'bg' => 'rgba(34,197,94,0.08)'],
-        'warning' => ['border' => 'rgba(245,158,11,0.4)', 'text' => 'var(--warning)', 'bg' => 'rgba(245,158,11,0.08)'],
-        'danger'  => ['border' => 'rgba(239,68,68,0.4)',  'text' => 'var(--danger)',  'bg' => 'rgba(239,68,68,0.08)'],
-        default   => ['border' => 'rgba(26,107,138,0.4)', 'text' => 'var(--accent)',  'bg' => 'rgba(26,107,138,0.08)'],
+    $colorMap = match($statusColor) {
+        'success' => ['text' => 'var(--success)', 'dot' => 'var(--success)', 'dim' => 'var(--success-dim)'],
+        'warning' => ['text' => 'var(--warning)', 'dot' => 'var(--warning)', 'dim' => 'var(--warning-dim)'],
+        'danger'  => ['text' => 'var(--danger)',  'dot' => 'var(--danger)',  'dim' => 'var(--danger-dim)'],
+        default   => ['text' => 'var(--accent)',  'dot' => 'var(--accent)',  'dim' => 'var(--accent-dim)'],
     };
-    $trendClass = $trend && str_starts_with($trend, '+') ? 'var(--danger)' : (
-                  $trend && str_starts_with($trend, '-') ? 'var(--success)' : 'var(--secondary)');
+    $trendClass = $trend && str_starts_with($trend, '+') ? 'var(--danger)' :
+                 ($trend && str_starts_with($trend, '-') ? 'var(--success)' : 'var(--warning)');
 @endphp
 
-<div {{ $attributes->merge(['class' => 'ts-metric']) }}
-     style="border-top: 2px solid {{ $accentStyles['border'] }}; position:relative; overflow:hidden;">
-    {{-- Subtle bg glow --}}
-    <div style="position:absolute;top:0;right:0;width:48px;height:48px;border-radius:50%;background:{{ $accentStyles['bg'] }};filter:blur(16px);pointer-events:none;"></div>
+<div {{ $attributes->merge(['class' => 'ts-metric']) }}>
+    {{-- Colored left border indicator --}}
+    <div style="position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:10px 0 0 10px;background:{{ $colorMap['dot'] }};opacity:0.7;"></div>
 
-    <div class="flex items-center justify-between gap-2 mb-1.5 relative">
-        <span class="text-[10px] font-medium uppercase tracking-wider truncate" style="color:var(--secondary)">{{ $label }}</span>
+    <div class="flex items-start justify-between gap-2 mb-3">
+        <span class="text-xs font-medium" style="color:var(--text-2);letter-spacing:-0.01em;">{{ $label }}</span>
         @if($trend)
-            <span class="text-[10px] font-medium flex-shrink-0 ts-badge ts-badge-danger" style="color:{{ $trendClass }}">{{ $trend }}</span>
+            <span class="text-[10px] font-medium px-1.5 py-0.5 rounded flex-shrink-0"
+                  style="color:{{ $trendClass }};background:var(--danger-dim);border:1px solid rgba(248,113,113,0.25);">{{ $trend }}</span>
         @endif
     </div>
-    <div class="text-2xl font-bold tabular leading-none" style="color:var(--text)">{{ $value }}</div>
+    <div class="text-2xl font-bold tabular leading-none" style="color:var(--text);letter-spacing:-0.03em;">{{ $value }}</div>
 </div>

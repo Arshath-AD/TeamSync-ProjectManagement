@@ -3,6 +3,11 @@
     $available   = $members->filter(fn($m) => $m->active_tasks <= 4)->count();
     $totalActive = $members->sum('active_tasks');
     $currentTab  = request('tab', 'members'); // 'members' or 'admin'
+
+    $palette = [
+        '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', 
+        '#ec4899', '#06b6d4', '#84cc16', '#f97316', '#6366f1'
+    ];
 @endphp
 
 <div class="space-y-4 fade-in">
@@ -71,12 +76,7 @@
             @foreach($members as $member)
                 @php
                     $w = max(4, ($member->active_tasks / max(1, $totalActive)) * 100);
-                    $c = match(true) {
-                        $member->active_tasks > 8 => 'var(--danger)',
-                        $member->active_tasks > 4 => 'var(--warning)',
-                        $member->active_tasks > 0 => 'var(--accent)',
-                        default                   => 'var(--elevated)',
-                    };
+                    $c = $palette[$member->id % count($palette)];
                 @endphp
                 <div style="width:{{ $w }}%;background:{{ $c }};transition:width 0.5s"
                      title="{{ $member->name }}: {{ $member->active_tasks }} tasks"></div>
@@ -84,27 +84,30 @@
         </div>
 
         {{-- Legend --}}
-        <div class="flex gap-4 mt-2 text-[10px]" style="color:var(--secondary)">
-            @foreach([
-                ['Overloaded', 'var(--danger)'],
-                ['Busy',       'var(--warning)'],
-                ['Active',     'var(--accent)'],
-                ['Idle',       'var(--elevated)'],
-            ] as [$label, $color])
-                <span class="flex items-center gap-1">
-                    <span class="h-2 w-2 rounded-sm inline-block" style="background:{{ $color }};border:1px solid var(--border)"></span>
-                    {{ $label }}
+        <div class="flex flex-wrap gap-4 mt-3 text-[10px]" style="color:var(--secondary)">
+            @foreach($members->filter(fn($m) => $m->active_tasks > 0)->take(8) as $member)
+                <span class="flex items-center gap-1.5" title="{{ $member->active_tasks }} active tasks">
+                    <span class="h-2 w-2 rounded-sm inline-block" style="background:{{ $palette[$member->id % count($palette)] }};"></span>
+                    <span class="truncate max-w-[80px]">{{ $member->name }}</span>
                 </span>
             @endforeach
+            @if($members->filter(fn($m) => $m->active_tasks > 0)->count() > 8)
+                <span class="flex items-center gap-1.5">
+                    <span class="h-2 w-2 rounded-sm inline-block" style="background:var(--elevated);border:1px solid var(--border)"></span>
+                    <span>+ others</span>
+                </span>
+            @endif
         </div>
     </div>
 
     {{-- Member grid --}}
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
         @forelse($members as $member)
+            @php $userColor = $palette[$member->id % count($palette)]; @endphp
             <x-workspace.member-card
                 :member="$member"
                 :isAdmin="$isAdmin"
+                :userColor="$userColor"
                 :metrics="[
                     'active_tasks'      => $member->active_tasks,
                     'completed_tasks'   => $member->completed_tasks,

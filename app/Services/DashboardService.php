@@ -48,9 +48,11 @@ class DashboardService
             'tasks as total_tasks',
             'tasks as completed_tasks' => function ($query) {
                 $query->where('status', 'Completed');
-            }
+            },
+            'memberOfProjects',
         ])->get()->map(function ($user) {
             $user->active_tasks = $user->total_tasks - $user->completed_tasks;
+            $user->project_count = $user->member_of_projects_count;
             
             $user->weighted_workload = $user->tasks->reduce(function($carry, $task) {
                 $weight = match($task->priority) {

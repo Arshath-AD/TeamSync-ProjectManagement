@@ -38,6 +38,7 @@ class ProjectController extends Controller
      */
     public function create()
     {
+        abort_if(\Illuminate\Support\Facades\Auth::user()->role !== 'admin', 403, 'Unauthorized');
         $users = User::orderBy('name')->get();
         return view('projects.create', compact('users'));
     }
@@ -47,6 +48,7 @@ class ProjectController extends Controller
      */
     public function store(StoreProjectRequest $request)
     {
+        abort_if(\Illuminate\Support\Facades\Auth::user()->role !== 'admin', 403, 'Unauthorized');
         $this->projectService->createProject($request->validated());
 
         return redirect()->route('projects.index')
@@ -75,6 +77,7 @@ class ProjectController extends Controller
      */
     public function edit(Project $project)
     {
+        abort_if(\Illuminate\Support\Facades\Auth::user()->role !== 'admin', 403, 'Unauthorized');
         $users = User::orderBy('name')->get();
         return view('projects.edit', compact('project', 'users'));
     }
@@ -84,6 +87,7 @@ class ProjectController extends Controller
      */
     public function update(UpdateProjectRequest $request, Project $project)
     {
+        abort_if(\Illuminate\Support\Facades\Auth::user()->role !== 'admin', 403, 'Unauthorized');
         $this->projectService->updateProject($project, $request->validated());
 
         return redirect()->route('projects.show', [$project, 'tab' => 'overview'])
@@ -119,6 +123,7 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
+        abort_if(\Illuminate\Support\Facades\Auth::user()->role !== 'admin', 403, 'Unauthorized');
         try {
             $this->projectService->deleteProject($project);
             return redirect()->route('projects.index')
